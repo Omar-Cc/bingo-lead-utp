@@ -39,7 +39,43 @@ export default function BingoPage() {
   const totalSlots = 25; // 5x5 grid
   const validatedCount = connections.filter((c) => c.validated).length;
   const progress = (validatedCount / totalSlots) * 100;
-  const isComplete = validatedCount >= totalSlots;
+
+  // Check for bingo win conditions
+  const checkBingo = (): boolean => {
+    const grid = Array.from({ length: 5 }, () => Array(5).fill(false));
+    
+    // Fill grid with validated connections
+    connections.forEach((conn) => {
+      if (conn.validated && conn.missionIndex !== undefined) {
+        const row = Math.floor(conn.missionIndex / 5);
+        const col = conn.missionIndex % 5;
+        grid[row][col] = true;
+      }
+    });
+
+    // Check horizontal lines
+    for (let row = 0; row < 5; row++) {
+      if (grid[row].every((cell) => cell)) return true;
+    }
+
+    // Check vertical lines
+    for (let col = 0; col < 5; col++) {
+      if (grid.every((row) => row[col])) return true;
+    }
+
+    // Check diagonal (top-left to bottom-right)
+    if (grid.every((row, i) => row[i])) return true;
+
+    // Check diagonal (top-right to bottom-left)
+    if (grid.every((row, i) => row[4 - i])) return true;
+
+    // Check four corners
+    if (grid[0][0] && grid[0][4] && grid[4][0] && grid[4][4]) return true;
+
+    return false;
+  };
+
+  const isComplete = checkBingo();
 
   console.log("📊 Bingo Page - All connections:", connections);
   console.log("📊 Validated count:", validatedCount);
@@ -164,17 +200,27 @@ export default function BingoPage() {
         {/* Action Buttons */}
         <div className="space-y-3">
           {isComplete ? (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/ganador")}
-              className="w-full py-4 px-6 bg-gradient-to-r from-[var(--gradient-start)] via-[var(--gradient-mid)] to-[var(--gradient-end)] text-white rounded-lg font-semibold text-lg shadow-lg shadow-primary/50 hover:shadow-xl hover:shadow-primary/60 transition-all flex items-center justify-center gap-2"
-            >
-              <Trophy className="w-6 h-6" />
-              ¡Ver mi Premio!
-            </motion.button>
+            <>
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => router.push("/ganador")}
+                className="w-full py-6 px-6 bg-gradient-to-r from-[var(--gradient-start)] via-[var(--gradient-mid)] to-[var(--gradient-end)] text-white rounded-lg font-bold text-3xl shadow-2xl shadow-primary/60 hover:shadow-3xl hover:shadow-primary/80 transition-all flex items-center justify-center gap-3"
+              >
+                <Trophy className="w-8 h-8" />
+                ¡LEAD!
+              </motion.button>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-center text-sm text-muted-foreground italic"
+              >
+                💡 Recuerda gritar: <span className="font-bold text-primary">"¡LEAD UTP!"</span>
+              </motion.p>
+            </>
           ) : (
             null
           )}
