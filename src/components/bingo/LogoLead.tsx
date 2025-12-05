@@ -9,7 +9,7 @@ interface LogoProps {
 export function LogoLead({ className = "" }: Readonly<LogoProps>) {
   return (
     <div className={className}>
-      <Image src={logoImage} alt="LEAD UTP Logo" className="w-full h-auto" />
+      <Image src={logoImage} alt="LEAD UTP Logo" className="w-full h-auto" unoptimized/>
     </div>
   );
 }
