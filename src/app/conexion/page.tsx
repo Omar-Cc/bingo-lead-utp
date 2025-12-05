@@ -30,7 +30,7 @@ function ConexionContent() {
         id: `${scannedUserId}-${Date.now()}`,
         scannedUserId,
         scannedUserName,
-        scanStartTime: Date.now(),
+        scanStartTime: 0, // Will be set when ConnectionTimer mounts
         question: question.question,
         validated: false,
         missionIndex, // Link to bingo card slot
@@ -74,6 +74,7 @@ function ConexionContent() {
 
   return (
     <ConnectionTimer
+      connectionId={currentConnection.id}
       startTime={currentConnection.scanStartTime}
       duration={45}
       onComplete={handleComplete}

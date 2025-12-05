@@ -13,6 +13,7 @@ interface BingoStore {
   clearCurrentConnection: () => void;
   setActiveMission: (index: number | null) => void;
   isUserIdUsed: (userId: string) => boolean;
+  startConnectionTimer: (id: string) => void;
 }
 
 export const useBingoStore = create<BingoStore>()(
@@ -73,6 +74,25 @@ export const useBingoStore = create<BingoStore>()(
         );
         console.log(`🔍 Is userId ${userId} used?`, used);
         return used;
+      },
+
+      startConnectionTimer: (id: string) => {
+        console.log("⏱️ Starting timer for connection:", id);
+        set((state) => {
+          const updated = state.connections.map((conn) =>
+            conn.id === id && conn.scanStartTime === 0
+              ? { ...conn, scanStartTime: Date.now() }
+              : conn
+          );
+          const updatedCurrent =
+            state.currentConnection?.id === id && state.currentConnection.scanStartTime === 0
+              ? { ...state.currentConnection, scanStartTime: Date.now() }
+              : state.currentConnection;
+          return {
+            connections: updated,
+            currentConnection: updatedCurrent,
+          };
+        });
       },
     }),
     {

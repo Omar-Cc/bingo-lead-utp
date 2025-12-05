@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useBingoStore } from "@/lib/store";
 
 interface ConnectionTimerProps {
+  readonly connectionId: string;
   readonly startTime: number;
   readonly duration?: number;
   readonly onComplete: () => void;
@@ -14,6 +16,7 @@ interface ConnectionTimerProps {
 }
 
 export function ConnectionTimer({
+  connectionId,
   startTime,
   duration = 45,
   onComplete,
@@ -22,10 +25,25 @@ export function ConnectionTimer({
 }: ConnectionTimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isComplete, setIsComplete] = useState(false);
+  const [actualStartTime, setActualStartTime] = useState(startTime);
+  const { startConnectionTimer } = useBingoStore();
+
+  // Start the timer when component mounts (if not already started)
+  useEffect(() => {
+    if (startTime === 0) {
+      console.log("⏱️ Initializing timer for connection:", connectionId);
+      startConnectionTimer(connectionId);
+      setActualStartTime(Date.now());
+    } else {
+      setActualStartTime(startTime);
+    }
+  }, [connectionId, startTime, startConnectionTimer]);
 
   useEffect(() => {
+    if (actualStartTime === 0) return; // Wait for timer to start
+
     const calculateTimeLeft = () => {
-      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const elapsed = Math.floor((Date.now() - actualStartTime) / 1000);
       const remaining = Math.max(0, duration - elapsed);
 
       setTimeLeft(remaining);
@@ -40,7 +58,7 @@ export function ConnectionTimer({
     const interval = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, duration, isComplete]);
+  }, [actualStartTime, duration, isComplete]);
 
   const progress = (timeLeft / duration) * 100;
   const circumference = 2 * Math.PI * 120;
