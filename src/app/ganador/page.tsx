@@ -8,10 +8,17 @@ import { useBingoStore } from "@/lib/store";
 export default function GanadorPage() {
   const { connections } = useBingoStore();
   const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 1000, height: 1000 });
 
   const validatedCount = connections.filter((c) => c.validated).length;
 
   useEffect(() => {
+    // Set actual window size on client
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+
     // Trigger confetti animation
     setShowConfetti(true);
   }, []);
@@ -25,11 +32,11 @@ export default function GanadorPage() {
             key={i}
             initial={{
               y: -100,
-              x: Math.random() * window.innerWidth,
+              x: Math.random() * windowSize.width,
               opacity: 0,
             }}
             animate={{
-              y: window.innerHeight + 100,
+              y: windowSize.height + 100,
               opacity: [0, 1, 1, 0],
             }}
             transition={{
