@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ConnectionTimer } from "@/components/bingo/ConnectionTimer";
 import { useBingoStore } from "@/lib/store";
 import { getRandomIceBreaker } from "@/lib/icebreakers";
 import type { Connection } from "@/lib/types";
 
-export default function ConexionPage() {
+function ConexionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentConnection, addConnection, validateConnection } =
@@ -80,5 +80,19 @@ export default function ConexionPage() {
       userName={currentConnection.scannedUserName}
       question={currentConnection.question}
     />
+  );
+}
+
+export default function ConexionPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
+      <ConexionContent />
+    </Suspense>
   );
 }
