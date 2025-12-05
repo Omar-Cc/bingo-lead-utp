@@ -24,10 +24,17 @@ export const useBingoStore = create<BingoStore>()(
 
       addConnection: (connection: Connection) => {
         console.log("➕ Adding connection:", connection);
-        set((state) => ({
-          connections: [...state.connections, connection],
-          currentConnection: connection,
-        }));
+        set((state) => {
+          // Remove any non-validated connections for this missionIndex
+          const filteredConnections = state.connections.filter(
+            (conn) => !(conn.missionIndex === connection.missionIndex && !conn.validated)
+          );
+          
+          return {
+            connections: [...filteredConnections, connection],
+            currentConnection: connection,
+          };
+        });
       },
 
       validateConnection: (id: string) => {

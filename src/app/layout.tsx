@@ -20,6 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
+      <link rel="shortcut icon" href="logo.svg" type="image/x-icon" />
       <body className={`${poppins.variable} font-sans antialiased`}>
         {children}
       </body>

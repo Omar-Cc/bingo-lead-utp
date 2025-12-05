@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { LogoLeadCheck} from "@/components/bingo/LogoLeadCheck";
 
 interface BingoCardProps {
   readonly isValidated: boolean;
@@ -43,14 +44,15 @@ export function BingoCard({
         <>
           {/* LEAD Logo Check */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <Image
+            {/* <Image
               src="/assets/logo/lead_blanco_check_bingo.png"
               alt="Validated"
               width={80}
               height={80}
               className="object-contain opacity-90"
               unoptimized
-            />
+            /> */}
+            <LogoLeadCheck className="w-20 h-20 opacity-90" />
           </div>
 
           {/* User name at bottom */}

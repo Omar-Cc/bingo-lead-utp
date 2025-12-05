@@ -46,11 +46,13 @@ export default function BingoPage() {
 
   // Create grid with connections + empty slots
   const gridItems = Array.from({ length: totalSlots }, (_, index) => {
-    const connection = connections.find((c) => c.missionIndex === index);
+    // Find the VALIDATED connection for this slot, or the most recent one
+    const slotConnections = connections.filter((c) => c.missionIndex === index);
+    const connection = slotConnections.find((c) => c.validated) || slotConnections[slotConnections.length - 1] || null;
     if (connection) {
       console.log(`📍 Slot ${index}:`, connection);
     }
-    return connection || null;
+    return connection;
   });
 
   const handleCardClick = (index: number) => {
@@ -174,17 +176,7 @@ export default function BingoPage() {
               ¡Ver mi Premio!
             </motion.button>
           ) : (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => router.push("/escanear")}
-              className="w-full py-4 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold text-lg shadow-lg shadow-primary/30 transition-all flex items-center justify-center gap-2"
-            >
-              <QrCode className="w-6 h-6" />
-              Escanear Nuevo Código
-            </motion.button>
+            null
           )}
 
           {/* Ver mi QR Button */}
